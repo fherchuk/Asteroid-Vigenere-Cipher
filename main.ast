@@ -1,0 +1,90 @@
+escape "import sys; sys.setrecursionlimit(10**6)"
+load system io.
+load vignere.
+load import.
+
+function run with state do
+
+  let mode = type @tostring(io @input("Select A Mode (encrypt/decrypt): ")). io @println("").
+    
+  if mode@tolower() == "encrypt" do
+    let m = true.
+  elif mode@tolower() == "decrypt" do
+    let m = false.
+  else do
+    io @println(""). io@println("// Invalid Mode //"). io@println("").
+    return run().
+  end
+
+-- ## calls function call to determine whether string is a valid txt file name.
+
+  let ptext = plaintext(). io @println("").
+  let key = getkey(). io @println("").
+
+
+-- ## calls vignere.ast and returns an encrypted/decrypted string.
+  let coded_text = vignere(convert(ptext), key, m).
+
+  io@println ("##############################").
+  io @println ("--- --- "+("ENCRYPTED" if m is true else "DECRYPTED")+" TEXT --- ---"). 
+    io@println ("##############################"). io@println("").
+    io @println(coded_text). io@println("").
+
+-- ## option to save to .txt file.
+   if type @tostring(io@input("Export To 'output.txt'? (y/n): ")) == "y" do
+      export(coded_text).
+    end
+  io@println("").
+  if type @tostring(io@input("Continue? (y/n): ")) == "y" do
+    io@println ("##############################"). io@println("").
+    return run().
+  else do 
+    return.
+  end
+
+end
+
+
+-- ## recursive function to test if file name is valid.
+
+function plaintext with p do
+  
+  let ptext = type @tostring(io @input("Enter A String To Encrypt/Decrypt Or A .txt File Name: ")). 
+
+  
+-- ## tests if input ends in '.txt' to open a file. Otherwise the string entered into console will be encrypted/decrypted.
+
+    let s_list = ptext@split ".".    
+    if s_list@(s_list@length()-1) == "txt" do
+      try      
+        let ptext = (import(ptext)).
+      catch Error do
+        io @println("").io @println ("// File Not Found //").io @println("").
+        return plaintext().
+      end
+    end
+  return ptext.
+end
+
+
+-- ## recursively retrieves a valid key from user.
+function getkey 
+  with key do
+    let key = convert(type @tostring(io @input("Enter A Key: "))).
+    for i in key do
+      if i is %string do
+        io @println("Invalid Key").
+        return getkey().
+      end
+    end
+    return key.
+  end
+
+io@println(""). io@println("").
+io@println ("#################################").
+io @println("# Asteroid Vigenere Cipher Tool #").
+io@println ("#################################").
+io @println("    CSC 493 Midterm Project").
+io@println ("    By: Rick Herchuk. 2023").
+io@println ("##############################"). io@println("").
+run().

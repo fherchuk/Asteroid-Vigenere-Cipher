@@ -1,0 +1,18 @@
+load system io.
+load system type.
+load vignere.
+
+
+function import with fname do
+  let fname = "textfiles/"+fname.
+  let input_file = io @open (fname,"r").
+  let content = io @read input_file.
+  return content.
+end
+
+function export with text do
+  let file = io @open ("textfiles/output.txt","w").
+  io @write (file, text).
+end
+
+

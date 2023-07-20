@@ -1,0 +1,81 @@
+load system io.
+load system math.
+
+
+-- main dictionary list. uses both the string values and indexes.
+
+let alphabet = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P",
+"Q","R","S","T","U","V","W","X","Y","Z"]
+
+---------------------------------------------------------------
+-- uses pattern matching to either convert a list of integers into a string of characters or vice versa.
+----------------------------------------------------------------
+
+function convert 
+--- converts string into list of int.
+
+with str if str is %string do
+    let numList = [].
+    let str = str@toupper().
+    let temp = str@explode().
+    for i in str do
+    try
+      numList@append(alphabet@index(i)).
+    catch Error do
+      numList@append(i).
+    end
+  end
+return numList.
+
+--- converts list of int into string of letters.
+  with str do
+    let nString = []
+    for j in str do
+      try
+        let nString = nString@append(alphabet@j).
+      catch Error do
+        let nString = nString@append(j).
+      end
+    end
+  return nString@join("").
+end
+
+function mode
+  with (key, encrypt) if encrypt is true do
+    return key.
+  with (key, decrypt) do
+    let decode = []
+    for i in key do
+      let decode = decode@append(i * -1).
+    end
+  return decode.
+end
+
+------------------------------------------------------------------------
+-- uses head/tail operators to perform the vignere cipher and returns encrypted/decrypted text
+--------------------------------------------------------------------------
+
+function vignere
+  with ((h|t), (k1|k2), pos) if pos is %boolean do  
+    let [k1|k2] = mode((k1|k2), pos).  
+    let ctext = [].
+    let ctext = ctext@append(math @mod((h + k1), 26)).
+    let k2 = k2@append(k1).
+  return vignere(t, k2, ctext).
+
+  with ((h|t), (k1|k2), ctext) do
+    try
+      let ctext = ctext@append(math @mod((h + k1), 26)).
+      let k2 = k2@append(k1).
+    catch Error do
+      let ctext = ctext@append(h).
+      let k2 = (k1|k2).
+    end
+  return vignere(t, k2, ctext).
+
+  with ([], (k1|k2), ctext) do
+  return convert(ctext).
+
+
+  
+end
